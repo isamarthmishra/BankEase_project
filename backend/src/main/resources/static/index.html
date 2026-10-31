@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase — NextGen Net Banking</title>
+    <meta name="description" content="Experience NextGen Net Banking with BankEase. Secure fund transfers, smart account management, instant loans, bill payments, and wealth investments.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Ambient Lighting Glows -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <a class="brand" onclick="App.navigate('dashboard')">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 18l-8-4v-6l8 4 8-4v6l-8 4zm0-9L4 7.5 12 3.5l8 4-8 3.5z"/></svg>
+            </div>
+            <div class="brand-text">Bank<span>Ease</span></div>
+        </a>
+
+        <!-- Authenticated Navigation Links -->
+        <nav id="nav-menu" class="nav-links" style="display: none;">
+            <button class="nav-link active" onclick="App.navigate('dashboard')" id="nav-btn-dashboard">Dashboard</button>
+            <button class="nav-link" onclick="App.navigate('accounts')" id="nav-btn-accounts">Accounts</button>
+            <button class="nav-link" onclick="App.navigate('transfers')" id="nav-btn-transfers">Transfers</button>
+            <button class="nav-link" onclick="App.navigate('beneficiaries')" id="nav-btn-beneficiaries">Beneficiaries</button>
+            <button class="nav-link" onclick="App.navigate('bills')" id="nav-btn-bills">Bill Pay</button>
+            <button class="nav-link" onclick="App.navigate('loans')" id="nav-btn-loans">Loans</button>
+            <button class="nav-link" onclick="App.navigate('investments')" id="nav-btn-investments">Investments</button>
+            <button class="nav-link" onclick="App.navigate('transactions')" id="nav-btn-transactions">History</button>
+            <button class="nav-link" onclick="App.navigate('docs')" id="nav-btn-docs">API Docs</button>
+        </nav>
+
+        <!-- Right User Actions -->
+        <div class="nav-actions">
+            <div id="user-header-badge" class="user-badge" style="display: none;" onclick="App.openProfileModal()" title="View & Edit Profile">
+                <div class="user-avatar" id="user-avatar-text">U</div>
+                <div class="user-name" id="user-display-name">Customer</div>
+            </div>
+            <button id="auth-action-btn" class="btn btn-secondary btn-sm" onclick="App.handleAuthButton()">Login</button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container">
+
+        <!-- 1. AUTH VIEW (Login & Register) -->
+        <section id="view-auth" style="display: none;">
+            <div style="max-width: 480px; margin: 3rem auto;">
+                <div class="glass-card">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 id="auth-title" style="font-size: 1.85rem; margin-bottom: 0.5rem;">Welcome to BankEase</h2>
+                        <p id="auth-subtitle" style="color: var(--text-secondary); font-size: 0.95rem;">Enter your credentials to access your secure portal</p>
+                    </div>
+
+                    <!-- Toggle Tabs -->
+                    <div style="display: flex; background: rgba(0,0,0,0.3); padding: 4px; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                        <button id="tab-login" class="btn btn-sm" style="flex: 1; background: var(--bg-card); color: var(--text-primary);" onclick="App.switchAuthTab('login')">Sign In</button>
+                        <button id="tab-register" class="btn btn-sm" style="flex: 1; background: transparent; color: var(--text-secondary);" onclick="App.switchAuthTab('register')">Register New Account</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="form-login" onsubmit="App.onLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="login-email" class="form-control" required placeholder="user@example.com" value="live.demo@bankease.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="login-password" class="form-control" required placeholder="••••••••" value="SecurePassword@123">
+                                <button type="button" class="btn-toggle-password" onclick="App.togglePasswordVisibility('login-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">👁️</button>
+                            </div>
+                        </div>
+                        <button type="submit" id="btn-submit-login" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                            Sign In to Portal
+                        </button>
+
+                        <!-- Demo Credentials Helper Badge -->
+                        <div style="margin-top: 1.25rem; padding: 0.85rem 1rem; background: rgba(99, 102, 241, 0.08); border: 1px dashed rgba(99, 102, 241, 0.35); border-radius: var(--radius-md); font-size: 0.82rem;">
+                            <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+                                <span>🔑 Documented Demo Credentials</span>
+                                <button type="button" class="btn btn-sm" style="padding: 2px 8px; font-size: 0.72rem; background: var(--primary); color: #fff; border: none; cursor: pointer;" onclick="App.fillDemoCredentials()">Quick Fill</button>
+                            </div>
+                            <div style="color: var(--text-secondary); line-height: 1.45;">
+                                Email: <strong style="color: var(--text-primary); font-family: monospace;">live.demo@bankease.com</strong><br>
+                                Password: <strong style="color: var(--text-primary); font-family: monospace;">SecurePassword@123</strong>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="form-register" style="display: none;" onsubmit="App.onRegister(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Legal Name</label>
+                            <input type="text" id="reg-name" class="form-control" required placeholder="e.g. Alex Morgan">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="reg-email" class="form-control" required placeholder="alex.morgan@domain.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password (Min 6 chars)</label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="reg-password" class="form-control" required minlength="6" placeholder="Secure Password">
+                                <button type="button" class="btn-toggle-password" onclick="App.togglePasswordVisibility('reg-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" id="reg-phone" class="form-control" placeholder="10-digit mobile number">
+                        </div>
+                        <button type="submit" id="btn-submit-register" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                            Create Banking Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. DASHBOARD VIEW -->
+        <section id="view-dashboard" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h1 style="font-size: 2.2rem; margin-bottom: 0.3rem;">Welcome back, <span id="dash-user-name" style="color: var(--primary);">User</span></h1>
+                    <p style="color: var(--text-secondary);">Here is your financial portfolio overview for today.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button class="btn btn-secondary btn-sm" onclick="App.openCreateAccountModal()">+ New Bank Account</button>
+                    <button class="btn btn-primary btn-sm" onclick="App.navigate('transfers')">⚡ Fast Transfer</button>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="stats-grid">
+                <div class="glass-card stat-card">
+                    <div class="stat-label">Total Liquid Net Worth</div>
+                    <div class="stat-value" id="dash-total-networth">₹0.00</div>
+                    <div class="stat-badge">Across All Accounts</div>
+                </div>
+                <div class="glass-card stat-card">
+                    <div class="stat-label">Active Bank Accounts</div>
+                    <div class="stat-value" id="dash-active-accounts">0</div>
+                    <div class="stat-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">Verified FDIC Insured</div>
+                </div>
+                <div class="glass-card stat-card">
+                    <div class="stat-label">Active Wealth Investments</div>
+                    <div class="stat-value" id="dash-total-investments">₹0.00</div>
+                    <div class="stat-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold);">Earning Returns</div>
+                </div>
+                <div class="glass-card stat-card">
+                    <div class="stat-label">Total Active Loans</div>
+                    <div class="stat-value" id="dash-total-loans">₹0.00</div>
+                    <div class="stat-badge" style="background: rgba(244, 63, 94, 0.15); color: var(--accent-danger);">Current Liabilities</div>
+                </div>
+            </div>
+
+            <!-- Bank Accounts Cards Slider -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1.35rem;">Your Bank Accounts</h3>
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Click deposit to add funds</span>
+            </div>
+            <div id="dashboard-accounts-container" class="account-cards-slider">
+                <!-- Injected dynamically -->
+            </div>
+
+            <!-- Recent Activity Split Grid -->
+            <div class="dashboard-split-grid">
+                <!-- Recent Transactions -->
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h3 style="font-size: 1.2rem;">Recent Ledger Activity</h3>
+                        <a onclick="App.navigate('transactions')" style="color: var(--primary); font-size: 0.85rem; cursor: pointer; text-decoration: none;">View All &rarr;</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Ref / Date</th>
+                                    <th>Type</th>
+                                    <th>Accounts</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-recent-transactions">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading transactions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Services & Shortcuts -->
+                <div class="glass-card">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1.25rem;">Quick Operations</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; padding: 1rem;" onclick="App.navigate('transfers')">
+                            <span>💸</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600;">Fund Transfer</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Send money instantly to accounts or beneficiaries</div>
+                            </div>
+                        </button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; padding: 1rem;" onclick="App.navigate('bills')">
+                            <span>⚡</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600;">Pay Utilities & Bills</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Electricity, water, gas, internet with 1 click</div>
+                            </div>
+                        </button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; padding: 1rem;" onclick="App.navigate('loans')">
+                            <span>🏦</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600;">Apply for Instant Loan</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Low interest rate personal & home loans</div>
+                            </div>
+                        </button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; padding: 1rem;" onclick="App.navigate('investments')">
+                            <span>📈</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600;">Wealth & Investments</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Fixed deposits & mutual funds up to 12% p.a.</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ACCOUNTS VIEW -->
+        <section id="view-accounts" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h1 style="font-size: 2rem;">Bank Account Management</h1>
+                    <p style="color: var(--text-secondary);">View account balances, account numbers, and open additional accounts</p>
+                </div>
+                <button class="btn btn-primary" onclick="App.openCreateAccountModal()">+ Open New Account</button>
+            </div>
+
+            <div id="accounts-full-list" class="account-cards-slider">
+                <!-- Dynamically loaded -->
+            </div>
+        </section>
+
+        <!-- 4. TRANSFERS VIEW -->
+        <section id="view-transfers" style="display: none;">
+            <div style="max-width: 640px; margin: 0 auto;">
+                <div class="glass-card">
+                    <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Secure Fund Transfer</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem;">
+                        Transfers are processed using atomic transactions with deterministic pessimistic locking and idempotency protection.
+                    </p>
+
+                    <form onsubmit="App.onExecuteTransfer(event)">
+                        <div class="form-group">
+                            <label class="form-label">Debit From Account</label>
+                            <select id="transfer-source-acc" class="form-control" required onchange="App.onTransferSourceChange()">
+                                <!-- Injected -->
+                            </select>
+                            <small id="transfer-source-balance-hint" style="color: var(--primary); display: block; margin-top: 0.35rem; font-weight: 600;"></small>
+                        </div>
+
+                        <div class="form-group">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label class="form-label" style="margin-bottom: 0;">Beneficiary Quick Select</label>
+                                <a onclick="App.navigate('beneficiaries')" style="color: var(--primary); font-size: 0.8rem; cursor: pointer;">Manage Beneficiaries</a>
+                            </div>
+                            <select id="transfer-beneficiary-select" class="form-control" onchange="App.onBeneficiarySelect(this)">
+                                <option value="">-- Select a saved beneficiary or enter manually below --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Target Account Number</label>
+                            <input type="text" id="transfer-target-acc" class="form-control" required placeholder="Enter 12-digit target account number">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Transfer Amount (INR)</label>
+                            <input type="number" id="transfer-amount" class="form-control" step="0.01" min="0.01" required placeholder="e.g. 2500.00">
+                            <!-- Quick amount pills -->
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="App.setTransferAmount(500)">₹500</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="App.setTransferAmount(1000)">₹1,000</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="App.setTransferAmount(5000)">₹5,000</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="App.setTransferAmount(10000)">₹10,000</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Remarks / Description</label>
+                            <input type="text" id="transfer-description" class="form-control" placeholder="e.g. Rent, Invoice, Grocery">
+                        </div>
+
+                        <button type="submit" id="btn-submit-transfer" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">
+                            🔒 Confirm & Transfer Funds
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. BENEFICIARIES VIEW -->
+        <section id="view-beneficiaries" style="display: none;">
+            <div class="two-col-grid">
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Add New Beneficiary</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Save payee account numbers for instant zero-friction transfers</p>
+
+                    <form onsubmit="App.onAddBeneficiary(event)">
+                        <div class="form-group">
+                            <label class="form-label">Beneficiary Full Name</label>
+                            <input type="text" id="ben-name" class="form-control" required placeholder="e.g. Sarah Jenkins">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" id="ben-acc" class="form-control" required placeholder="12-digit account number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bank Name</label>
+                            <input type="text" id="ben-bank" class="form-control" value="BankEase">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">IFSC / Branch Code</label>
+                            <input type="text" id="ben-ifsc" class="form-control" value="BANKEASE001">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nickname (Optional)</label>
+                            <input type="text" id="ben-nickname" class="form-control" placeholder="e.g. Sister, Landlord">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Beneficiary</button>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 1.25rem;">Saved Beneficiaries</h3>
+                    <div id="beneficiaries-list-container">
+                        <!-- Injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. BILLS VIEW -->
+        <section id="view-bills" style="display: none;">
+            <div class="two-col-grid bills-layout">
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Register New Bill</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Add utility bills to your payment schedule</p>
+
+                    <form onsubmit="App.onCreateBill(event)">
+                        <div class="form-group">
+                            <label class="form-label">Biller Name</label>
+                            <input type="text" id="bill-name" class="form-control" required placeholder="e.g. BESCOM Power / Airtel Fiber">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="bill-category" class="form-control" required>
+                                <option value="ELECTRICITY">Electricity</option>
+                                <option value="WATER">Water Utility</option>
+                                <option value="GAS">Cooking Gas</option>
+                                <option value="INTERNET">Broadband & Internet</option>
+                                <option value="MOBILE_RECHARGE">Mobile Recharge</option>
+                                <option value="CREDIT_CARD">Credit Card Bill</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Consumer / Account ID</label>
+                            <input type="text" id="bill-consumer-no" class="form-control" required placeholder="e.g. CON-847291">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bill Amount (INR)</label>
+                            <input type="number" id="bill-amount" class="form-control" step="0.01" min="0.01" required placeholder="e.g. 1250.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" id="bill-due-date" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Bill</button>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                        <h3 style="font-size: 1.35rem; margin-bottom: 0;">Upcoming & Paid Bills</h3>
+                        <div class="filter-tabs">
+                            <button type="button" class="filter-tab active" id="bill-filter-ALL" onclick="App.filterBills('ALL')">All Bills</button>
+                            <button type="button" class="filter-tab" id="bill-filter-PENDING" onclick="App.filterBills('PENDING')">Pending</button>
+                            <button type="button" class="filter-tab" id="bill-filter-PAID" onclick="App.filterBills('PAID')">Paid</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Biller</th>
+                                    <th>Category</th>
+                                    <th>Consumer No</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bills-table-body">
+                                <tr><td colspan="6" style="text-align: center;">Loading bills...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. LOANS VIEW -->
+        <section id="view-loans" style="display: none;">
+            <div class="two-col-grid calculator-layout">
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Instant Loan Calculator</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Approved instantly and disbursed directly into your bank account</p>
+
+                    <form onsubmit="App.onApplyLoan(event)">
+                        <div class="form-group">
+                            <label class="form-label">Disbursement Account</label>
+                            <select id="loan-account-select" class="form-control" required>
+                                <!-- Injected -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Loan Type</label>
+                            <select id="loan-type-select" class="form-control" required onchange="App.recalculateLoanEMI()">
+                                <option value="PERSONAL">Personal Loan (11.5% p.a.)</option>
+                                <option value="HOME">Home Loan (8.5% p.a.)</option>
+                                <option value="AUTO">Auto Vehicle Loan (9.0% p.a.)</option>
+                                <option value="EDUCATION">Education Loan (7.5% p.a.)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Principal Amount (INR)</label>
+                            <input type="number" id="loan-principal" class="form-control" step="1000" min="1000" required value="50000" oninput="App.recalculateLoanEMI()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Repayment Tenure (Months)</label>
+                            <input type="number" id="loan-tenure" class="form-control" min="3" max="120" required value="12" oninput="App.recalculateLoanEMI()">
+                        </div>
+
+                        <!-- Live EMI Estimation Box -->
+                        <div style="background: rgba(0, 245, 160, 0.08); border: 1px solid rgba(0, 245, 160, 0.2); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Estimated Monthly EMI:</span>
+                                <strong id="loan-calc-emi" style="color: var(--primary); font-size: 1.25rem;">₹4,431.00</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Repayable:</span>
+                                <span id="loan-calc-total" style="color: var(--text-primary); font-weight: 600;">₹53,172.00</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">🚀 Apply & Disburse Loan</button>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 1.25rem;">Your Active Loans</h3>
+                    <div id="loans-list-container">
+                        <!-- Injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. INVESTMENTS VIEW -->
+        <section id="view-investments" style="display: none;">
+            <div class="two-col-grid calculator-layout">
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Wealth & Portfolio Investment</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Grow your savings with guaranteed returns and high-yield asset classes</p>
+
+                    <form onsubmit="App.onCreateInvestment(event)">
+                        <div class="form-group">
+                            <label class="form-label">Funding Account</label>
+                            <select id="inv-account-select" class="form-control" required>
+                                <!-- Injected -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Investment Product</label>
+                            <select id="inv-type-select" class="form-control" required onchange="App.recalculateInvReturns()">
+                                <option value="FIXED_DEPOSIT">Fixed Deposit (7.25% p.a.)</option>
+                                <option value="MUTUAL_FUND">High-Growth Mutual Fund (12.00% p.a.)</option>
+                                <option value="BONDS">Government Sovereign Bonds (8.10% p.a.)</option>
+                                <option value="RECURRING_DEPOSIT">Recurring Deposit (6.80% p.a.)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Investment Amount (INR)</label>
+                            <input type="number" id="inv-amount" class="form-control" step="500" min="500" required value="10000" oninput="App.recalculateInvReturns()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lock-in Period (Months)</label>
+                            <input type="number" id="inv-months" class="form-control" min="1" max="60" required value="12" oninput="App.recalculateInvReturns()">
+                        </div>
+
+                        <!-- Live Maturity Projection Box -->
+                        <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Projected Maturity Value:</span>
+                                <strong id="inv-calc-maturity" style="color: #818cf8; font-size: 1.25rem;">₹10,725.00</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Annual Return Rate:</span>
+                                <span id="inv-calc-rate" style="color: var(--text-primary); font-weight: 600;">7.25% p.a.</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">📈 Invest Capital</button>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="font-size: 1.35rem; margin-bottom: 1.25rem;">Your Investment Portfolio</h3>
+                    <div id="investments-list-container">
+                        <!-- Injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. TRANSACTIONS VIEW -->
+        <section id="view-transactions" style="display: none;">
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h2 style="font-size: 1.75rem;">Master Ledger & Statement</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Complete immutable audit trail of all financial movements</p>
+                    </div>
+                    <div class="txn-filter-bar">
+                        <input type="text" id="txn-search-input" class="form-control" placeholder="Search reference, account, or remarks..." oninput="App.filterTransactions()" style="min-width: 240px;">
+                        <input type="date" id="txn-date-from" class="form-control txn-date-input" onchange="App.filterTransactions()" title="Start Date" placeholder="From Date">
+                        <input type="date" id="txn-date-to" class="form-control txn-date-input" onchange="App.filterTransactions()" title="End Date" placeholder="To Date">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="App.resetTxnFilters()" title="Reset all filters">Reset</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="App.exportTransactionsCSV()" title="Export filtered statement as CSV">📥 Export CSV</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Reference Number</th>
+                                <th>Timestamp</th>
+                                <th>Type</th>
+                                <th>Source Account</th>
+                                <th>Target Account</th>
+                                <th>Amount</th>
+                                <th>Balance After</th>
+                                <th>Status</th>
+                                <th>Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="full-transactions-table-body">
+                            <!-- Injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. API DOCS VIEW -->
+        <section id="view-docs" style="display: none;">
+            <div class="glass-card">
+                <h2 style="font-size: 1.85rem; margin-bottom: 0.5rem;">BankEase REST API Specification</h2>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">
+                    Enterprise OpenAPI-compliant REST endpoints secured with Bearer JWT tokens and deterministic transactional guarantees.
+                </p>
+
+                <div id="api-docs-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Interactive Modals -->
+
+    <!-- Create Account Modal -->
+    <div id="modal-create-account" class="modal-backdrop">
+        <div class="modal-content">
+            <button class="modal-close" onclick="App.closeModals()">&times;</button>
+            <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Open New Bank Account</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Choose account type and optional opening deposit</p>
+
+            <form onsubmit="App.onCreateAccount(event)">
+                <div class="form-group">
+                    <label class="form-label">Account Type</label>
+                    <select id="create-acc-type" class="form-control" required>
+                        <option value="SAVINGS">Savings Account (Daily Interest)</option>
+                        <option value="CHECKING">Checking Account (Zero Overdraft Fee)</option>
+                        <option value="CURRENT">Current Business Account</option>
+                        <option value="FIXED_DEPOSIT">Fixed Deposit Account</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Initial Opening Deposit (INR)</label>
+                    <input type="number" id="create-acc-deposit" class="form-control" step="100" min="0" value="1000" placeholder="0.00">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="modal-deposit" class="modal-backdrop">
+        <div class="modal-content">
+            <button class="modal-close" onclick="App.closeModals()">&times;</button>
+            <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Deposit Funds</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Deposit capital directly into selected account</p>
+
+            <form onsubmit="App.onDeposit(event)">
+                <input type="hidden" id="deposit-acc-number">
+                <div class="form-group">
+                    <label class="form-label">Account Number</label>
+                    <input type="text" id="deposit-acc-display" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Deposit Amount (INR)</label>
+                    <input type="number" id="deposit-amount" class="form-control" step="100" min="1" required placeholder="e.g. 5000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Source Remarks</label>
+                    <input type="text" id="deposit-desc" class="form-control" value="Online Cash Deposit">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Confirm Deposit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Official Transaction Receipt Modal -->
+    <div id="modal-receipt" class="modal-backdrop">
+        <div class="modal-content" style="max-width: 580px;">
+            <button class="modal-close" onclick="App.closeModals()">&times;</button>
+
+            <div class="receipt-paper">
+                <div class="receipt-header">
+                    <div style="font-size: 1.35rem; font-weight: 800; font-family: 'Outfit';">Bank<span>Ease</span></div>
+                    <div style="font-size: 0.8rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem;">Official Transaction Receipt</div>
+                </div>
+
+                <div class="receipt-row">
+                    <span class="label">Reference ID</span>
+                    <span class="val" id="receipt-ref" style="font-family: monospace;">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Date & Time</span>
+                    <span class="val" id="receipt-date">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Transaction Type</span>
+                    <span class="val" id="receipt-type">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Status</span>
+                    <span class="val" id="receipt-status"><span class="badge badge-success">SUCCESS</span></span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Source Account</span>
+                    <span class="val" id="receipt-source">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Beneficiary / Target</span>
+                    <span class="val" id="receipt-target">-</span>
+                </div>
+                <div class="receipt-row" style="margin-top: 0.5rem; padding-top: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.2);">
+                    <span class="label" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Transferred Amount</span>
+                    <span class="val" id="receipt-amount" style="font-size: 1.35rem; font-weight: 800; color: var(--primary); font-family: 'Outfit';">₹0.00</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Available Balance After</span>
+                    <span class="val" id="receipt-balance-after" style="color: var(--text-secondary);">₹0.00</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Description / Remarks</span>
+                    <span class="val" id="receipt-desc">-</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="App.copyReceiptRef()">Copy Reference</button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="window.print()">Print Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pay Bill Modal -->
+    <div id="modal-pay-bill" class="modal-backdrop">
+        <div class="modal-content">
+            <button class="modal-close" onclick="App.closeModals()">&times;</button>
+            <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Pay Utility Bill</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Confirm account deduction for bill settlement</p>
+
+            <form onsubmit="App.onConfirmPayBill(event)">
+                <input type="hidden" id="paybill-bill-id">
+                <div class="form-group">
+                    <label class="form-label">Biller Name</label>
+                    <input type="text" id="paybill-biller" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bill Amount</label>
+                    <input type="text" id="paybill-amount" class="form-control" readonly style="color: var(--primary); font-weight: 700;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pay From Account</label>
+                    <select id="paybill-account-select" class="form-control" required>
+                        <!-- Injected -->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Confirm & Pay Bill</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Repay Loan Modal -->
+    <div id="modal-repay-loan" class="modal-backdrop">
+        <div class="modal-content">
+            <button class="modal-close" onclick="App.closeModals()">&times;</button>
+            <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Repay Loan Installment</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Debit your linked bank account to reduce loan balance</p>
+
+            <form onsubmit="App.onConfirmRepayLoan(event)">
+                <input type="hidden" id="repay-loan-id">
+                <div class="form-group">
+                    <label class="form-label">Loan Number</label>
+                    <input type="text" id="repay-loan-number" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Remaining Balance</label>
+                    <input type="text" id="repay-loan-remaining" class="form-control" readonly style="color: var(--accent-danger); font-weight: 700;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Repayment Amount (INR)</label>
+                    <input type="number" id="repay-amount" class="form-control" step="100" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Confirm Repayment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Profile & Security Modal -->
+    <div id="modal-profile" class="modal-backdrop">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="modal-close" onclick="App.closeModals()">&times;</button>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="user-avatar" id="profile-avatar-large" style="width: 56px; height: 56px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;">U</div>
+                <div>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">Account Profile & Security</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">Manage personal details and password</p>
+                </div>
+            </div>
+
+            <form onsubmit="App.onUpdateProfile(event)">
+                <input type="hidden" id="profile-user-id">
+                <div class="form-group">
+                    <label class="form-label">Full Legal Name</label>
+                    <input type="text" id="profile-name" class="form-control" required placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="profile-email" class="form-control" required placeholder="Email Address">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="profile-phone" class="form-control" placeholder="Mobile Number">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password (leave blank to keep current)</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="profile-password" class="form-control" minlength="6" placeholder="Enter new password (optional)">
+                        <button type="button" class="btn-toggle-password" onclick="App.togglePasswordVisibility('profile-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="profile-confirm-password" class="form-control" placeholder="Re-enter new password">
+                        <button type="button" class="btn-toggle-password" onclick="App.togglePasswordVisibility('profile-confirm-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">👁️</button>
+                    </div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                    Account created: <span id="profile-created-date">-</span>
+                </div>
+                <button type="submit" id="btn-save-profile" class="btn btn-primary" style="width: 100%;">Save Profile Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

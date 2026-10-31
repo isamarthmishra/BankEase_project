@@ -1,0 +1,155 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BankEase — NextGen Net Banking API",
+    "description": "Enterprise-grade REST API for BankEase Net Banking platform. Features atomic fund transfers with deterministic pessimistic lock ordering, idempotent transactions, utility bill payments, loan disbursement/repayment, and wealth investment management.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "Local development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new banking customer profile",
+        "responses": { "201": { "description": "Profile registered and JWT token returned" } }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Authenticate user credentials and receive JWT Bearer token",
+        "responses": { "200": { "description": "Successful login" } }
+      }
+    },
+    "/api/accounts": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Retrieve all bank accounts belonging to authenticated customer",
+        "responses": { "200": { "description": "List of accounts" } }
+      },
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Open a new bank account (SAVINGS, CHECKING, CURRENT, FIXED_DEPOSIT)",
+        "responses": { "201": { "description": "Account created" } }
+      }
+    },
+    "/api/accounts/{accountNumber}/balance": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Real-time balance inquiry for an account",
+        "responses": { "200": { "description": "Balance inquiry details" } }
+      }
+    },
+    "/api/accounts/{accountNumber}/deposit": {
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Deposit funds into a bank account",
+        "responses": { "200": { "description": "Deposit confirmed with receipt" } }
+      }
+    },
+    "/api/transfers": {
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Execute fund transfer with pessimistic locking and idempotency protection",
+        "responses": { "200": { "description": "Transfer executed with transaction receipt" } }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Retrieve complete transaction ledger for authenticated customer",
+        "responses": { "200": { "description": "List of transactions" } }
+      }
+    },
+    "/api/transactions/receipt/{referenceNumber}": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Get official transaction receipt by reference number",
+        "responses": { "200": { "description": "Transaction receipt" } }
+      }
+    },
+    "/api/beneficiaries": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "List all saved transfer beneficiaries",
+        "responses": { "200": { "description": "List of beneficiaries" } }
+      },
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Save a new transfer beneficiary",
+        "responses": { "201": { "description": "Beneficiary saved" } }
+      }
+    },
+    "/api/bills": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "List pending and paid utility bills",
+        "responses": { "200": { "description": "List of bills" } }
+      },
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Register a new utility bill for payment",
+        "responses": { "201": { "description": "Bill created" } }
+      }
+    },
+    "/api/bills/{id}/pay": {
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Pay utility bill from designated customer account",
+        "responses": { "200": { "description": "Bill paid and status updated" } }
+      }
+    },
+    "/api/loans": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "List all active and repaid loans",
+        "responses": { "200": { "description": "List of loans" } }
+      }
+    },
+    "/api/loans/apply": {
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Apply for loan with instant calculation, approval, and account disbursement",
+        "responses": { "201": { "description": "Loan approved and funds disbursed" } }
+      }
+    },
+    "/api/loans/{id}/repay": {
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Repay loan monthly installment or balance from bank account",
+        "responses": { "200": { "description": "Repayment processed" } }
+      }
+    },
+    "/api/investments": {
+      "get": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Retrieve user portfolio of wealth investments",
+        "responses": { "200": { "description": "List of investments" } }
+      },
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Start an investment (Fixed Deposit, Mutual Funds, Bonds, RD)",
+        "responses": { "201": { "description": "Investment opened and debited from account" } }
+      }
+    },
+    "/api/investments/{id}/withdraw": {
+      "post": {
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Liquidate investment and credit principal plus returns into account",
+        "responses": { "200": { "description": "Liquidation completed" } }
+      }
+    }
+  }
+}
